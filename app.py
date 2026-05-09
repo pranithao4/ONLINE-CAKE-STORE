@@ -1,8 +1,9 @@
 import streamlit as st
+from pathlib import Path
 
-# Read HTML file
-with open("index.html", "r", encoding="utf-8") as f:
+html_path = Path(__file__).parent / "login.html"
+
+with open(html_path, "r", encoding="utf-8") as f:
     html_data = f.read()
 
-# Display HTML
-st.components.v1.html(html_data, height=800, scrolling=True)
+st.components.v1.html(html_data, height=1000, scrolling=True)
