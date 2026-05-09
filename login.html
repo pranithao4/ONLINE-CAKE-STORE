@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sweet Delights Cake Shop</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff5f5;
+        }
+        header {
+            background-color: #ff6b88;
+            color: white;
+            padding: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        .title-container {
+            flex-grow: 1;
+            text-align: left;
+        }
+        .header-right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.7rem;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 1.5rem;
+        }
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            text-align: center;
+            position: relative;
+        }
+        .product-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 5px 15px rgba(255, 107, 136, 0.3);
+        }
+        .product-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .product-card h3 {
+            color: #333;
+            margin: 0.8rem 0 0.3rem;
+            font-size: 1rem;
+        }
+        .price {
+            color: #ff4757;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 0.5rem 0;
+        }
+        .flavor-badge {
+            background-color: #ffd6e0;
+            color: #ff4757;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        .cart-panel {
+            position: fixed;
+            right: 1rem;
+            top: 5rem;
+            background: white;
+            padding: 0.8rem;
+            border-radius: 8px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            width: 300px;
+            z-index: 100;
+            max-height: 60vh;
+            overflow-y: auto;
+            display: none;
+        }
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .cart-items {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 0.5rem;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0.3rem 0;
+            padding: 0.3rem 0;
+            border-bottom: 1px dashed #eee;
+            font-size: 0.85rem;
+        }
+        .cart-item button {
+            background-color: #ff4757;
+            padding: 0.2rem 0.4rem;
+            font-size: 0.7rem;
+            margin-left: 0.5rem;
+        }
+        .cart-item button:hover {
+            background-color: #ff0000;
+        }
+        .total {
+            font-weight: bold;
+            text-align: right;
+            font-size: 0.9rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #eee;
+        }
+        .empty-cart-message {
+            text-align: center; 
+            color: #666;
+            padding: 1rem 0;
+        }
+        button {
+            background-color: #ff6b88;
+            color: white;
+            border: none;
+            padding: 0.5rem 0.8rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            font-size: 0.85rem;
+        }
+        button:hover {
+            background-color: #ff4757;
+            transform: scale(1.05);
+        }
+        .search-bar {
+            padding: 1rem;
+            background-color: #ffebee;
+            text-align: center;
+        }
+        .search-bar input {
+            padding: 0.5rem 1rem;
+            width: 60%;
+            border: 1px solid #ffcdd2;
+            border-radius: 20px;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+        /* Auth Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 1.5rem;
+            border-radius: 15px;
+            width: 350px;
+            max-width: 90%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .close {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #ff6b88;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #ff6b88;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ffcdd2;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+        .auth-toggle {
+            text-align: center;
+            margin-top: 1rem;
+            color: #ff6b88;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .user-greeting {
+            font-size: 0.9rem;
+            margin-right: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 120px;
+            color: white;
+        }
+        /* Checkout Modal Styles */
+        .checkout-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .checkout-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 1.5rem;
+            border-radius: 15px;
+            width: 600px;
+            max-width: 90%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .checkout-step {
+            display: none;
+        }
+        .checkout-step.active {
+            display: block;
+        }
+        .checkout-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+        .address-list {
+            margin: 1rem 0;
+        }
+        .address-card {
+            border: 1px solid #ffcdd2;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .address-card:hover {
+            border-color: #ff6b88;
+        }
+        .address-card.selected {
+            border-color: #ff6b88;
+            background-color: #ffebee;
+        }
+        .address-card h4 {
+            margin: 0 0 0.5rem 0;
+            color: #ff4757;
+        }
+        .address-card p {
+            margin: 0.2rem 0;
+            font-size: 0.9rem;
+        }
+        .add-address-btn {
+            width: 100%;
+            margin-top: 0.5rem;
+            background-color: #4caf50;
+        }
+        .add-address-btn:hover {
+            background-color: #3d8b40;
+        }
+        .payment-method {
+            border: 1px solid #ffcdd2;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        .payment-method:hover {
+            border-color: #ff6b88;
+        }
+        .payment-method.selected {
+            border-color: #ff6b88;
+            background-color: #ffebee;
+        }
+        .payment-method h4 {
+            margin: 0 0 0.5rem 0;
+            color: #ff4757;
+        }
+        .payment-method p {
+            margin: 0.2rem 0;
+            font-size: 0.9rem;
+        }
+        .payment-icon {
+            margin-right: 1rem;
+            font-size: 1.5rem;
+            color: #555;
+        }
+        .payment-method.selected .payment-icon {
+            color: #ff4757;
+        }
+        .order-summary {
+            background-color: #ffebee;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .order-summary h3 {
+            margin-top: 0;
+            color: #ff4757;
+        }
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        .order-total {
+            font-weight: bold;
+            border-top: 1px solid #ffcdd2;
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+            color: #ff4757;
+        }
+        .success-message {
+            text-align: center;
+            padding: 2rem;
+        }
+        .success-message svg {
+            width: 50px;
+            height: 50px;
+            color: #4caf50;
+            margin-bottom: 1rem;
+        }
+        .special-offer {
+            background-color: #fff8e1;
+            padding: 0.5rem;
+            text-align: center;
+            font-weight: bold;
+            color: #ff6b88;
+            border-radius: 0 0 10px 10px;
+            margin-top: -1rem;
+            margin-bottom: 1rem;
+        }
+        /* Navigation Styles */
+        .main-nav {
+            background-color: #ff4757;
+            padding: 0.8rem 1rem;
+            display: flex;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .nav-list {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 1.5rem;
+        }
+        .nav-item {
+            position: relative;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+        .nav-link:hover, .nav-link.active {
+            background-color: white;
+            color: #ff4757;
+        }
+        /* Hero Section */
+        .hero {
+            background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('images/logo.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+        }
+        .hero h2 {
+            font-size: 2.5rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 1rem 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        .hero-btn {
+            background-color: #ff6b88;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .hero-btn:hover {
+            background-color: white;
+            color: #ff6b88;
+            transform: scale(1.05);
+        }
+        /* Category Section */
+        .category-section {
+            padding: 2rem 1rem;
+            text-align: center;
+            background-color: #ffebee;
+        }
+        .section-title {
+            color: #ff4757;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .category-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem 1rem;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(255, 107, 136, 0.3);
+        }
+        .category-card img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+        }
+        .category-card h3 {
+            color: #ff4757;
+            margin: 0;
+        }
+        /* Special Offer Banner */
+        .offer-banner {
+            background-color: #ff6b88;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            margin: 1rem 0;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 1.5rem;
+        }
+        .footer-section h3 {
+            color: #ff6b88;
+            margin-bottom: 1rem;
+        }
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+        .footer-section ul li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer-section ul li a:hover {
+            color: #ff6b88;
+        }
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+        .social-icons a:hover {
+            color: #ff6b88;
+        }
+        .copyright {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #555;
+        }
+        /* Product Badges */
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #ff4757;
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        /* Payment Form Styles */
+        .payment-form {
+            margin-top: 1rem;
+            display: none;
+        }
+        .payment-form.active {
+            display: block;
+        }
+        .payment-form .form-group {
+            margin-bottom: 0.8rem;
+        }
+        .payment-form label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        .payment-form input {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+        .card-details {
+            display: flex;
+            gap: 1rem;
+        }
+        .card-details .form-group {
+            flex: 1;
+        }
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .header-right {
+                margin-top: 1rem;
+                justify-content: center;
+            }
+            .nav-list {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.8rem;
+            }
+            .hero h2 {
+                font-size: 2rem;
+            }
+            .hero p {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+            .checkout-content {
+                width: 90%;
+            }
+            .card-details {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="title-container">
+                <h1 style="margin: 0; font-size: 1.4rem;">Sweet Delights</h1>
+                <p style="margin: 0; font-size: 0.85rem;">Delicious Cakes | Free Delivery</p>
+            </div>
+            <div class="header-right">
+                <div class="cart-icon" id="cart-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span class="cart-count" id="header-cart-count">0</span>
+                </div>
+                <div class="auth-buttons">
+                    <button id="login-btn">Login</button>
+                    <button id="signup-btn">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <ul class="nav-list">
+            <li class="nav-item"><a href="#" class="nav-link active" data-category="all">Home</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-category="cake">Cakes</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-category="cupcake">Cupcakes</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-category="dessert">Desserts</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-category="special">Special Offers</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-category="shortcake">Short cakes</a></li>
+            <li class="nav-item"><a href="#" class="nav-link" data-category="custom">Custom Orders</a></li>
+        </ul>
+    </nav>
+
+    <div class="hero">
+        <h2>Delicious Cakes for Every Occasion</h2>
+        <p>Freshly baked with love using the finest ingredients. Order now for same-day delivery!</p>
+        <a href="#" class="hero-btn" id="shop-now-btn">Shop Now</a>
+    </div>
+
+    <div class="offer-banner">
+        🎉 Special Offer! Get 15% off on all orders above ₹1000. Use code: SWEET15 🎉
+    </div>
+
+    <div class="category-section">
+        <h2 class="section-title">Our Categories</h2>
+        <div class="category-grid">
+            <div class="category-card" data-category="birthday">
+                <img src="https://images.unsplash.com/photo-1559620192-032c4bc4674e?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Birthday Cakes">
+                <h3>Birthday Cakes</h3>
+            </div>
+            <div class="category-card" data-category="anniversary">
+                <img src="https://images.unsplash.com/photo-1540337706094-da10342c93d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Anniversary Cakes">
+                <h3>Anniversary Cakes</h3>
+            </div>
+            <div class="category-card" data-category="cupcake">
+                <img src="images/cupcake.jpg" alt="Cupcakes">
+                <h3>Cupcakes</h3>
+            </div>
+            <div class="category-card" data-category="dessert">
+                <img src="https://images.unsplash.com/photo-1571115177098-24ec42ed204d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Desserts">
+                <h3>Desserts</h3>
+            </div>
+            <div class="category-card" data-category="shortcake">
+                <img src="images/shortcake.jpg" alt="Short cake">
+                <h3>Short cakes</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" id="search" placeholder="Search for cakes, flavors..." oninput="filterProducts()">
+    </div>
+
+    <div class="product-grid" id="products">
+        <!-- Products will be loaded here by JavaScript -->
+    </div>
+
+    <div class="cart-panel" id="cart-panel">
+        <div class="cart-header">
+            <h3 style="margin: 0; font-size: 1rem;">Your Cake Cart</h3>
+            <button id="close-cart" style="padding: 0.2rem 0.4rem; font-size: 0.8rem;">×</button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <p class="empty-cart-message">Your cart is empty</p>
+        </div>
+        <div class="total">Total: <span id="cart-total">₹0</span></div>
+        <button id="checkout-btn" style="width: 100%; margin-top: 0.5rem;">Checkout</button>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Sweet Delights</h3>
+                <p>Freshly baked cakes and desserts made with love and the finest ingredients.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-pinterest"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Our Cakes</a></li>
+                    <li><a href="#">Special Offers</a></li>
+                    <li><a href="#">Custom Orders</a></li>
+                    <li><a href="#">About Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <ul>
+                    <li>123 Cake Street, Sweet City</li>
+                    <li>Phone: +91 9876543210</li>
+                    <li>Email: info@sweetdelights.com</li>
+                    <li>Open: 9AM - 9PM Daily</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 Sweet Delights. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 style="margin-top: 0; color: #ff6b88;">Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" style="width: 100%;">Login</button>
+            </form>
+            <p class="auth-toggle">Don't have an account? <span id="show-signup">Sign Up</span></p>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 style="margin-top: 0; color: #ff6b88;">Sign Up</h2>
+            <form id="signup-form">
+                <div class="form-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-phone">Phone Number</label>
+                    <input type="tel" id="signup-phone" required>
+                </div>
+                <button type="submit" style="width: 100%;">Sign Up</button>
+            </form>
+            <p class="auth-toggle">Already have an account? <span id="show-login">Login</span></p>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="checkout-modal">
+        <div class="checkout-content">
+            <span class="close">&times;</span>
+            
+            <!-- Step 1: Address Selection -->
+            <div id="address-step" class="checkout-step active">
+                <h2 style="color: #ff6b88;">Select Delivery Address</h2>
+                <div class="address-list" id="address-list">
+                    <!-- Addresses will be loaded here -->
+                </div>
+                <button class="add-address-btn" id="add-address-btn">+ Add New Address</button>
+                <div class="checkout-nav">
+                    <button id="cancel-checkout">Cancel</button>
+                    <button id="proceed-to-payment">Proceed to Payment</button>
+                </div>
+            </div>
+            
+            <!-- Step 2: Add New Address -->
+            <div id="new-address-step" class="checkout-step">
+                <h2 style="color: #ff6b88;">Add New Address</h2>
+                <form id="new-address-form">
+                    <div class="form-group">
+                        <label for="address-name">Full Name</label>
+                        <input type="text" id="address-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address-phone">Phone Number</label>
+                        <input type="tel" id="address-phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address-pincode">Pincode</label>
+                        <input type="text" id="address-pincode" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address-street">Address (House No, Building, Street)</label>
+                        <input type="text" id="address-street" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address-landmark">Landmark (Optional)</label>
+                        <input type="text" id="address-landmark">
+                    </div>
+                    <div class="form-group">
+                        <label for="address-city">City</label>
+                        <input type="text" id="address-city" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address-state">State</label>
+                        <input type="text" id="address-state" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address-type">Address Type</label>
+                        <select id="address-type" style="width: 100%; padding: 0.5rem; border-radius: 20px; border: 1px solid #ffcdd2;">
+                            <option value="home">Home</option>
+                            <option value="work">Work</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="checkout-nav">
+                        <button type="button" id="back-to-address">Back</button>
+                        <button type="submit">Save Address</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Step 3: Payment Method -->
+            <div id="payment-step" class="checkout-step">
+                <h2 style="color: #ff6b88;">Select Payment Method</h2>
+                <div class="payment-options">
+                    <div class="payment-method selected" data-method="upi">
+                        <i class="fas fa-mobile-alt payment-icon"></i>
+                        <div>
+                            <h4>UPI Payment</h4>
+                            <p>Pay using any UPI app like Google Pay, PhonePe, Paytm</p>
+                        </div>
+                    </div>
+                    <div class="payment-method" data-method="card">
+                        <i class="far fa-credit-card payment-icon"></i>
+                        <div>
+                            <h4>Credit/Debit Card</h4>
+                            <p>Pay using Visa, Mastercard, Rupay cards</p>
+                        </div>
+                    </div>
+                    <div class="payment-method" data-method="netbanking">
+                        <i class="fas fa-university payment-icon"></i>
+                        <div>
+                            <h4>Net Banking</h4>
+                            <p>Pay directly from your bank account</p>
+                        </div>
+                    </div>
+                    <div class="payment-method" data-method="cod">
+                        <i class="fas fa-money-bill-wave payment-icon"></i>
+                        <div>
+                            <h4>Cash on Delivery</h4>
+                            <p>Pay when you receive your order</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- UPI Payment Form -->
+                <div class="payment-form" id="upi-form">
+                    <div class="form-group">
+                        <label for="upi-id">UPI ID</label>
+                        <input type="text" id="upi-id" placeholder="yourname@upi">
+                    </div>
+                </div>
+                
+                <!-- Card Payment Form -->
+                <div class="payment-form" id="card-form">
+                    <div class="form-group">
+                        <label for="card-number">Card Number</label>
+                        <input type="text" id="card-number" placeholder="1234 5678 9012 3456">
+                    </div>
+                    <div class="form-group">
+                        <label for="card-name">Name on Card</label>
+                        <input type="text" id="card-name" placeholder="John Doe">
+                    </div>
+                    <div class="card-details">
+                        <div class="form-group">
+                            <label for="card-expiry">Expiry Date</label>
+                            <input type="text" id="card-expiry" placeholder="MM/YY">
+                        </div>
+                        <div class="form-group">
+                            <label for="card-cvv">CVV</label>
+                            <input type="text" id="card-cvv" placeholder="123">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Net Banking Form -->
+                <div class="payment-form" id="netbanking-form">
+                    <div class="form-group">
+                        <label for="bank-select">Select Bank</label>
+                        <select id="bank-select" style="width: 100%; padding: 0.5rem; border-radius: 20px; border: 1px solid #ffcdd2;">
+                            <option value="">Select your bank</option>
+                            <option value="sbi">State Bank of India</option>
+                            <option value="hdfc">HDFC Bank</option>
+                            <option value="icici">ICICI Bank</option>
+                            <option value="axis">Axis Bank</option>
+                            <option value="kotak">Kotak Mahindra Bank</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- COD Message -->
+                <div class="payment-form" id="cod-form">
+                    <p style="color: #666; font-size: 0.9rem;">Pay with cash when your order is delivered. An extra ₹50 charge may apply for COD orders.</p>
+                </div>
+                
+                <div class="order-summary">
+                    <h3>Order Summary</h3>
+                    <div id="checkout-items">
+                        <!-- Order items will be loaded here -->
+                    </div>
+                    <div class="order-total">Total: <span id="checkout-total">₹0</span></div>
+                </div>
+                
+                <div class="checkout-nav">
+                    <button id="back-to-address-from-payment">Back</button>
+                    <button id="place-order-btn">Place Order</button>
+                </div>
+            </div>
+            
+            <!-- Step 4: Order Confirmation -->
+            <div id="confirmation-step" class="checkout-step">
+                <div class="success-message">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <h2 style="color: #ff6b88;">Order Placed Successfully!</h2>
+                    <p>Your order ID: <strong id="order-id">ORD123456</strong></p>
+                    <p>Estimated delivery: <strong id="delivery-date">2-3 business days</strong></p>
+                    <p>We'll send you a confirmation email shortly!</p>
+                    <button id="continue-shopping" style="margin-top: 1rem;">Continue Shopping</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Font Awesome for icons -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+    <script>
+        // Product Data
+        const products = [
+            {
+                id: 1,
+                name: "Chocolate Fudge Cake",
+                price: 899,
+                category: "cake",
+                flavor: "chocolate",
+                image: "images/chocolatefudge.jpg",
+                description: "Rich chocolate cake with fudge filling and chocolate ganache",
+                badge: "Bestseller"
+            },
+            {
+                id: 2,
+                name: "Red Velvet Cake",
+                price: 999,
+                category: "anniversary",
+                flavor: "red velvet",
+                image: "images/redvelvet.jpg",
+                description: "Classic red velvet cake with cream cheese frosting",
+                badge: "Popular"
+            },
+            {
+                id: 3,
+                name: "Vanilla Cupcakes (6)",
+                price: 499,
+                category: "cupcake",
+                flavor: "vanilla",
+                image: "images/vanillacupcake.jpg",
+                description: "Soft vanilla cupcakes with buttercream frosting",
+                badge: "New"
+            },
+            {
+                id: 4,
+                name: "Strawberry Cheesecake",
+                price: 799,
+                category: "dessert",
+                flavor: "strawberry",
+                image: "images/strawberrycheesecake.jpg",
+                description: "Creamy cheesecake with fresh strawberry topping"
+            },
+            {
+                id: 5,
+                name: "Rainbow Birthday Cake",
+                price: 1299,
+                category: "cake",
+                flavor: "vanilla",
+                image: "images/rainbowcake.jpg",
+                description: "Colorful vanilla cake with rainbow layers",
+                badge: "Special"
+            },
+            {
+                id: 6,
+                name: "Chocolate Lava Cake",
+                price: 249,
+                category: "dessert",
+                flavor: "chocolate",
+                image: 'images/chocolava.jpg',
+                description: "Warm chocolate cake with molten center"
+            },
+            {
+                id: 7,
+                name: "Custom Photo Cake",
+                price: 1499,
+                category: "custom",
+                flavor: "custom",
+                image: "images/photocake.jpg",
+                description: "Personalized cake with your photo printed on top",
+                badge: "Custom"
+            },
+            {
+                id: 8,
+                name: "Chocolate Cupcakes (6)",
+                price: 549,
+                category: "cupcake",
+                flavor: "chocolate",
+                image: "images/chocolatecupcake.jpg",
+                description: "Rich chocolate cupcakes with chocolate ganache",
+                badge: "Bestseller"
+            },
+            {
+                id: 9,
+                name: "Chocolate Truffle Cake",
+                price: 1399,
+                category: "cake,anniversary",
+                flavor: "chocolate",
+                image: "images/chocolatetruffle.jpg",
+                description: "Rich chocolate truffle flavored cake with chocolate fudge",
+                badge: "Bestseller"
+            },
+            {
+                id: 10,
+                name: "Black Forest Cake",
+                price: 799,
+                category: "cake",
+                flavor: "chocolate",
+                image: "images/blackforest.jpg",
+                description: "Chocolate cake layered with whipped cream and cherries, topped with chocolate shavings",
+            },
+            {
+                id: 11,
+                name: "Butterscotch Cake",
+                price: 999,
+                category: "cake",
+                flavor: "butterscotch",
+                image: "images/butterscotch.jpg",
+                description: "Rich butterscotch-flavored cake layered with creamy butterscotch frosting and caramel drizzlec",
+            },
+            {
+                id: 12,
+                name: "Brownies (4)",
+                price: 399,
+                category: "dessert",
+                flavor: "chocolate",
+                image: "images/brownies.jpg",
+                description: "Rich chocolate-flavored brownies with chocolate chunks",
+            },
+            {
+                id: 13,
+                name: "Vanilla shortcake",
+                price: 399,
+                category: "shortcake",
+                flavor: "vanilla",
+                image: "images/vanillashort.jpg",
+                description:"Vanilla cake with buttercream frosting",
+            },
+            {
+                id: 14,
+                name: "Blueberry shortcake",
+                price: 399,
+                category: "shortcake",
+                flavor: "blueberry",
+                image: "images/blueberryshort.jpg",
+                description: "Blueberry-flavoured cake with blueberry toppings",
+                badge: "New"
+            }
+
+
+        ];
+
+        // DOM Elements
+        const productsContainer = document.getElementById('products');
+        const cartPanel = document.getElementById('cart-panel');
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartTotalElement = document.getElementById('cart-total');
+        const headerCartCount = document.getElementById('header-cart-count');
+        const cartToggle = document.getElementById('cart-toggle');
+        const closeCart = document.getElementById('close-cart');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        const searchInput = document.getElementById('search');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const categoryCards = document.querySelectorAll('.category-card');
+        const loginBtn = document.getElementById('login-btn');
+        const signupBtn = document.getElementById('signup-btn');
+        const loginModal = document.getElementById('login-modal');
+        const signupModal = document.getElementById('signup-modal');
+        const showSignup = document.getElementById('show-signup');
+        const showLogin = document.getElementById('show-login');
+        const closeButtons = document.querySelectorAll('.close');
+        const checkoutModal = document.getElementById('checkout-modal');
+        const cancelCheckout = document.getElementById('cancel-checkout');
+        const continueShopping = document.getElementById('continue-shopping');
+        const shopNowBtn = document.getElementById('shop-now-btn');
+
+        // State
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+        let currentCheckoutStep = 'address';
+        let selectedAddress = null;
+        let selectedPaymentMethod = 'upi';
+
+        // Initialize
+        displayProducts(products);
+        updateCartUI();
+        updateAuthUI();
+
+        // Event Listeners
+        cartToggle.addEventListener('click', toggleCartPanel);
+        closeCart.addEventListener('click', toggleCartPanel);
+        checkoutBtn.addEventListener('click', openCheckoutModal);
+        searchInput.addEventListener('input', filterProducts);
+        navLinks.forEach(link => link.addEventListener('click', filterByCategory));
+        categoryCards.forEach(card => card.addEventListener('click', filterByCategory));
+        loginBtn?.addEventListener('click', () => openModal('login'));
+        signupBtn?.addEventListener('click', () => openModal('signup'));
+        showSignup.addEventListener('click', () => {
+            closeModal('login');
+            openModal('signup');
+        });
+        showLogin.addEventListener('click', () => {
+            closeModal('signup');
+            openModal('login');
+        });
+        closeButtons.forEach(btn => btn.addEventListener('click', closeAllModals));
+        cancelCheckout.addEventListener('click', closeCheckoutModal);
+        continueShopping.addEventListener('click', () => {
+            closeCheckoutModal();
+            toggleCartPanel();
+        });
+        shopNowBtn.addEventListener('click', () => {
+            document.querySelector('.nav-link[data-category="all"]').click();
+        });
+
+        // Checkout Event Listeners
+        document.getElementById('proceed-to-payment').addEventListener('click', proceedToPayment);
+        document.getElementById('back-to-address').addEventListener('click', backToAddress);
+        document.getElementById('add-address-btn').addEventListener('click', showNewAddressForm);
+        document.getElementById('back-to-address-from-payment').addEventListener('click', backToAddressFromPayment);
+        document.getElementById('place-order-btn').addEventListener('click', placeOrder);
+        document.getElementById('new-address-form').addEventListener('submit', saveNewAddress);
+
+        // Payment method selection
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', function() {
+                document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedPaymentMethod = this.dataset.method;
+                
+                // Hide all payment forms
+                document.querySelectorAll('.payment-form').forEach(form => {
+                    form.style.display = 'none';
+                });
+                
+                // Show selected payment form
+                document.getElementById(`${selectedPaymentMethod}-form`).style.display = 'block';
+            });
+        });
+
+        // Form Submissions
+        document.getElementById('login-form').addEventListener('submit', handleLogin);
+        document.getElementById('signup-form').addEventListener('submit', handleSignup);
+
+        // Functions
+        function displayProducts(productsToDisplay) {
+            productsContainer.innerHTML = '';
+            
+            if (productsToDisplay.length === 0) {
+                productsContainer.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No products found. Try a different search.</p>';
+                return;
+            }
+            
+            productsToDisplay.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.dataset.id = product.id;
+                productCard.dataset.category = product.category;
+                productCard.dataset.flavor = product.flavor;
+                
+                let badgeHTML = '';
+                if (product.badge) {
+                    badgeHTML = `<div class="product-badge">${product.badge}</div>`;
+                }
+                
+                productCard.innerHTML = `
+                    ${badgeHTML}
+                    <img src="${product.image}" alt="${product.name}">
+                    <div class="flavor-badge">${product.flavor}</div>
+                    <h3>${product.name}</h3>
+                    <p class="price">₹${product.price}</p>
+                    <p style="font-size: 0.8rem; color: #666; margin-bottom: 0.5rem;">${product.description}</p>
+                    <button class="add-to-cart">Add to Cart</button>
+                `;
+                
+                productsContainer.appendChild(productCard);
+            });
+            
+            // Add event listeners to all add-to-cart buttons
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', addToCart);
+            });
+        }
+
+        function filterProducts() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const activeCategory = document.querySelector('.nav-link.active')?.dataset.category || 'all';
+            
+            let filteredProducts = products.filter(product => {
+                const matchesSearch = product.name.toLowerCase().includes(searchTerm) || 
+                                     product.description.toLowerCase().includes(searchTerm) ||
+                                     product.flavor.toLowerCase().includes(searchTerm);
+                
+                const matchesCategory = activeCategory === 'all' || product.category === activeCategory;
+                
+                return matchesSearch && matchesCategory;
+            });
+            
+            displayProducts(filteredProducts);
+        }
+
+        function filterByCategory(e) {
+            e.preventDefault();
+            const category = this.dataset.category || this.closest('.category-card').dataset.category;
+            
+            // Update active nav link
+            navLinks.forEach(link => link.classList.remove('active'));
+            if (this.classList?.contains('nav-link')) {
+                this.classList.add('active');
+            } else {
+                document.querySelector(`.nav-link[data-category="${category}"]`).classList.add('active');
+            }
+            
+            // Filter products
+            if (category === 'all') {
+                displayProducts(products);
+            } else {
+                const filteredProducts = products.filter(product => product.category === category);
+                displayProducts(filteredProducts);
+            }
+            
+            // Reset search
+            searchInput.value = '';
+            
+            // Scroll to products
+            document.querySelector('.product-grid').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function addToCart(e) {
+            const productId = parseInt(e.target.closest('.product-card').dataset.id);
+            const product = products.find(p => p.id === productId);
+            
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    quantity: 1,
+                    image: product.image
+                });
+            }
+            
+            updateCart();
+            showAddToCartFeedback(e.target);
+        }
+
+        function showAddToCartFeedback(button) {
+            button.textContent = 'Added!';
+            button.style.backgroundColor = '#4caf50';
+            
+            setTimeout(() => {
+                button.textContent = 'Add to Cart';
+                button.style.backgroundColor = '#ff6b88';
+            }, 1000);
+        }
+
+        function updateCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            // Update cart items list
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p class="empty-cart-message">Your cart is empty</p>';
+            } else {
+                cartItemsContainer.innerHTML = '';
+                cart.forEach(item => {
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'cart-item';
+                    cartItem.innerHTML = `
+                        <div style="display: flex; align-items: center;">
+                            <img src="${item.image}" width="40" height="40" style="border-radius: 4px; margin-right: 0.5rem;">
+                            <div>
+                                <div style="font-weight: bold;">${item.name}</div>
+                                <div>₹${item.price} × ${item.quantity}</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <div style="font-weight: bold; margin-right: 0.5rem;">₹${item.price * item.quantity}</div>
+                            <button class="remove-item" data-id="${item.id}">×</button>
+                        </div>
+                    `;
+                    cartItemsContainer.appendChild(cartItem);
+                });
+                
+                // Add event listeners to remove buttons
+                document.querySelectorAll('.remove-item').forEach(button => {
+                    button.addEventListener('click', removeFromCart);
+                });
+            }
+            
+            // Update cart total and count
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            cartTotalElement.textContent = `₹${total}`;
+            headerCartCount.textContent = cart.reduce((count, item) => count + item.quantity, 0);
+        }
+
+        function removeFromCart(e) {
+            const productId = parseInt(e.target.dataset.id);
+            cart = cart.filter(item => item.id !== productId);
+            updateCart();
+        }
+
+        function toggleCartPanel() {
+            cartPanel.style.display = cartPanel.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function openCheckoutModal() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            
+            if (!currentUser) {
+                openModal('login');
+                return;
+            }
+            
+            // Load addresses if user is logged in
+            loadAddresses();
+            
+            // Update order summary
+            updateOrderSummary();
+            
+            // Show checkout modal
+            checkoutModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            
+            // Start with address step
+            showCheckoutStep('address');
+            
+            // Show UPI form by default
+            document.querySelectorAll('.payment-form').forEach(form => {
+                form.style.display = 'none';
+            });
+            document.getElementById('upi-form').style.display = 'block';
+        }
+
+        function closeCheckoutModal() {
+            checkoutModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function closeAllModals() {
+            loginModal.style.display = 'none';
+            signupModal.style.display = 'none';
+            checkoutModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function openModal(modalType) {
+            closeAllModals();
+            if (modalType === 'login') {
+                loginModal.style.display = 'block';
+            } else if (modalType === 'signup') {
+                signupModal.style.display = 'block';
+            }
+            document.body.style.overflow = 'hidden';
+        }
+
+        function showCheckoutStep(step) {
+            document.querySelectorAll('.checkout-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            
+            document.getElementById(`${step}-step`).classList.add('active');
+            currentCheckoutStep = step;
+        }
+
+        function loadAddresses() {
+            const addressList = document.getElementById('address-list');
+            const userAddresses = currentUser?.addresses || [];
+            
+            if (userAddresses.length === 0) {
+                addressList.innerHTML = '<p>No saved addresses. Please add one.</p>';
+                return;
+            }
+            
+            addressList.innerHTML = '';
+            userAddresses.forEach((address, index) => {
+                const addressCard = document.createElement('div');
+                addressCard.className = 'address-card';
+                if (index === 0) {
+                    addressCard.classList.add('selected');
+                    selectedAddress = address;
+                }
+                addressCard.innerHTML = `
+                    <h4>${address.type === 'home' ? 'Home' : address.type === 'work' ? 'Work' : 'Other'}</h4>
+                    <p><strong>${address.name}</strong> | ${address.phone}</p>
+                    <p>${address.street}, ${address.landmark ? address.landmark + ', ' : ''}${address.city}, ${address.state} - ${address.pincode}</p>
+                `;
+                addressCard.addEventListener('click', () => {
+                    document.querySelectorAll('.address-card').forEach(card => {
+                        card.classList.remove('selected');
+                    });
+                    addressCard.classList.add('selected');
+                    selectedAddress = address;
+                });
+                addressList.appendChild(addressCard);
+            });
+        }
+
+        function showNewAddressForm() {
+            showCheckoutStep('new-address');
+        }
+
+        function backToAddress() {
+            showCheckoutStep('address');
+        }
+
+        function backToAddressFromPayment() {
+            showCheckoutStep('address');
+        }
+
+        function proceedToPayment() {
+            if (!selectedAddress) {
+                alert('Please select an address or add a new one');
+                return;
+            }
+            showCheckoutStep('payment');
+        }
+
+        function saveNewAddress(e) {
+            e.preventDefault();
+            
+            const newAddress = {
+                name: document.getElementById('address-name').value,
+                phone: document.getElementById('address-phone').value,
+                pincode: document.getElementById('address-pincode').value,
+                street: document.getElementById('address-street').value,
+                landmark: document.getElementById('address-landmark').value,
+                city: document.getElementById('address-city').value,
+                state: document.getElementById('address-state').value,
+                type: document.getElementById('address-type').value
+            };
+            
+            // Add to user's addresses
+            if (!currentUser.addresses) {
+                currentUser.addresses = [];
+            }
+            currentUser.addresses.push(newAddress);
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            // Select this address
+            selectedAddress = newAddress;
+            
+            // Go back to address selection
+            showCheckoutStep('address');
+            loadAddresses();
+            
+            // Reset form
+            e.target.reset();
+        }
+
+        function updateOrderSummary() {
+            const checkoutItems = document.getElementById('checkout-items');
+            checkoutItems.innerHTML = '';
+            
+            cart.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'order-item';
+                itemElement.innerHTML = `
+                    <span>${item.name} (${item.quantity})</span>
+                    <span>₹${item.price * item.quantity}</span>
+                `;
+                checkoutItems.appendChild(itemElement);
+            });
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('checkout-total').textContent = `₹${total}`;
+        }
+
+        function placeOrder() {
+            if (!selectedPaymentMethod) {
+                alert('Please select a payment method');
+                return;
+            }
+            
+            // Validate payment details based on method
+            if (selectedPaymentMethod === 'upi' && !validateUpiPayment()) {
+                return;
+            }
+            
+            if (selectedPaymentMethod === 'card' && !validateCardPayment()) {
+                return;
+            }
+            
+            if (selectedPaymentMethod === 'netbanking' && !validateNetbanking()) {
+                return;
+            }
+            
+            // In a real app, you would process payment here
+            // For demo, we'll just show confirmation
+            
+            // Generate random order ID
+            const orderId = 'ORD' + Math.floor(100000 + Math.random() * 900000);
+            document.getElementById('order-id').textContent = orderId;
+            
+            // Set delivery date (2-3 days from now)
+            const deliveryDate = new Date();
+            deliveryDate.setDate(deliveryDate.getDate() + 2 + Math.floor(Math.random() * 2));
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('delivery-date').textContent = deliveryDate.toLocaleDateString('en-IN', options);
+            
+            // Show confirmation
+            showCheckoutStep('confirmation');
+            
+            // Clear cart
+            cart = [];
+            updateCart();
+        }
+
+        function validateUpiPayment() {
+            const upiId = document.getElementById('upi-id').value;
+            if (!upiId || !upiId.includes('@')) {
+                alert('Please enter a valid UPI ID (e.g., yourname@upi)');
+                return false;
+            }
+            return true;
+        }
+
+        function validateCardPayment() {
+            const cardNumber = document.getElementById('card-number').value.replace(/\s/g, '');
+            const cardName = document.getElementById('card-name').value;
+            const cardExpiry = document.getElementById('card-expiry').value;
+            const cardCvv = document.getElementById('card-cvv').value;
+            
+            if (!cardNumber || cardNumber.length !== 16 || !/^\d+$/.test(cardNumber)) {
+                alert('Please enter a valid 16-digit card number');
+                return false;
+            }
+            
+            if (!cardName) {
+                alert('Please enter the name on card');
+                return false;
+            }
+            
+            if (!cardExpiry || !/^\d{2}\/\d{2}$/.test(cardExpiry)) {
+                alert('Please enter a valid expiry date in MM/YY format');
+                return false;
+            }
+            
+            if (!cardCvv || cardCvv.length !== 3 || !/^\d+$/.test(cardCvv)) {
+                alert('Please enter a valid 3-digit CVV');
+                return false;
+            }
+            
+            return true;
+        }
+
+        function validateNetbanking() {
+            const bank = document.getElementById('bank-select').value;
+            if (!bank) {
+                alert('Please select your bank');
+                return false;
+            }
+            return true;
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            // In a real app, you would validate credentials with server
+            // For demo, we'll just check if user exists in localStorage
+            
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                updateAuthUI();
+                closeModal('login');
+                
+                // If cart is not empty, open checkout
+                if (cart.length > 0) {
+                    openCheckoutModal();
+                }
+            } else {
+                alert('Invalid email or password');
+            }
+        }
+
+        function handleSignup(e) {
+            e.preventDefault();
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const phone = document.getElementById('signup-phone').value;
+            
+            // Basic validation
+            if (!name || !email || !password || !phone) {
+                alert('Please fill all fields');
+                return;
+            }
+            
+            // Check if user already exists
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            if (users.some(u => u.email === email)) {
+                alert('User with this email already exists');
+                return;
+            }
+            
+            // Create new user
+            const newUser = {
+                name,
+                email,
+                password,
+                phone,
+                addresses: []
+            };
+            
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            // Log in the new user
+            currentUser = newUser;
+            localStorage.setItem('currentUser', JSON.stringify(newUser));
+            updateAuthUI();
+            closeModal('signup');
+            
+            // Show address form if cart is not empty
+            if (cart.length > 0) {
+                openCheckoutModal();
+                showNewAddressForm();
+            }
+        }
+
+        function updateAuthUI() {
+            const authButtons = document.querySelector('.auth-buttons');
+            if (!authButtons) return;
+            
+            if (currentUser) {
+                authButtons.innerHTML = `
+                    <span class="user-greeting">Hi, ${currentUser.name.split(' ')[0]}</span>
+                    <button id="logout-btn">Logout</button>
+                `;
+                document.getElementById('logout-btn').addEventListener('click', logout);
+            } else {
+                authButtons.innerHTML = `
+                    <button id="login-btn">Login</button>
+                    <button id="signup-btn">Sign Up</button>
+                `;
+                // Re-add event listeners
+                document.getElementById('login-btn').addEventListener('click', () => openModal('login'));
+                document.getElementById('signup-btn').addEventListener('click', () => openModal('signup'));
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            updateAuthUI();
+        }
+    </script>
+</body>
+</html>
